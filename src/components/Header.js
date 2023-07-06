@@ -15,7 +15,7 @@ const Header = () => {
     <>
     <Navbar bg="primary" data-bs-theme="primary">
         <Container>
-          <Navbar.Brand href="home">DailyWorks</Navbar.Brand>
+          <Navbar.Brand>DailyWorks</Navbar.Brand>
           <Nav className="me-auto">
             {loggedin && <NavLink to={`/home`} className="navlink">Home</NavLink> }
             <NavLink to={`/register`} className="navlink">Register</NavLink>

@@ -50,3 +50,8 @@
 .navlink:hover{
   color: #282c34;
 }
+
+/* Form */
+.errorMsg{
+  color: #d22b2b;
+}

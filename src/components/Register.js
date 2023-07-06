@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Container from "../../node_modules/react-bootstrap/esm/Container";
@@ -10,7 +11,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ToastContainer, toast } from 'react-toastify';
 
 const Register = () => {
-    const [validated, setValidated] = useState(false);
     const [name, setName ] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,12 +20,30 @@ const Register = () => {
     );
 
     const dispatch = useDispatch();
+    const {
+        register: formRegister,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        checkValidation();
+    const registerOptions = {
+    name: { required: "Name is required", pattern: /[A-Za-z]/ },
+    email: { required: "Email is required", pattern: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/ },
+    password: {
+        required: "Password is required",
+        minLength: {
+        value: 8,
+        message: "Password must have at least 8 characters"
+        }
+    }
+    };
+
+    const onSubmit = () => {
         const userExist = users.find((user) => user.email === email);
-        if(!validated){
+        const validation = name && email && password;
+        console.log(name, email, password)
+        if(!validation){
             toast.error('Please enter valid values for the fields', {
                 position: toast.POSITION.TOP_RIGHT
             });
@@ -50,15 +68,10 @@ const Register = () => {
         toast.success('User registered successfully', {
             position: toast.POSITION.TOP_RIGHT
         });
+        reset();
         setName('');
         setEmail('');
         setPassword('');
-    }
-    
-    const checkValidation = () => {
-        if(name && email && password){
-            setValidated(true);
-        }
     }
 
 
@@ -70,27 +83,49 @@ const Register = () => {
       <Row className="justify-content-center my-4">
         <Col lg="6">
         <h2>Register</h2>
-        <Form>
-            <Form.Group className="mb-3" controlId="formBasicName">
-                <Form.Label>Name</Form.Label>
-                <Form.Control type="text" placeholder="Name" value={name}
-                onChange={(e) => setName(e.target.value)}/>
-            </Form.Group>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+            <div className="py-2">
+                <label>Name</label>
+                <input
+                    type="text" placeholder="Name" className="form-control"
+                    {...formRegister("name", registerOptions.name)}
+                    onChange={(e) => setName(e.target.value)}
 
-            <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="Email" value={email}
-                onChange={(e) => setEmail(e.target.value)}/>
-            </Form.Group>
+                />
+                {errors.name && (
+                    <p className="errorMsg">{errors.name.message}</p>
+                )}
+            </div>
 
-            <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Password" value={password}
-                onChange={(e) => setPassword(e.target.value)}/>
-            </Form.Group>
+            <div className="py-2">
+                <label>Email</label>
+                <input
+                    type="text" placeholder="Email" className="form-control"
+                    {...formRegister("email", registerOptions.email)}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                {errors.email && errors.email.type === "required" && (
+                    <p className="errorMsg">Email is required.</p>
+                )}
+                {errors.email && errors.email.type === "pattern" && (
+                    <p className="errorMsg">Email is not valid.</p>
+                )}
+            </div>
 
-            <div>
-                <Button variant="secondary" type="submit" onClick={(e) =>handleSubmit(e)}>
+            <div className="py-2">
+                <label>Password</label>
+                <input
+                    type="text" placeholder="Password" className="form-control"
+                    {...formRegister("password", registerOptions.password)}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                {errors.password && (
+                    <p className="errorMsg">{errors.password.message}</p>
+                )}
+            </div>
+
+            <div className="my-2">
+                <Button variant="secondary" type="submit">
                     Submit
                 </Button>
             </div>

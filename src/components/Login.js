@@ -19,6 +19,7 @@ const Register = () => {
     const users = useSelector((state) => {
         return state.users.users}
     );
+    
     const handleSubmit = (e) => {
         e.preventDefault();
         const userExist = users.find((user) => user.email === email && user.password === password);
@@ -64,7 +65,7 @@ const Register = () => {
             <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="text" placeholder="Email" value={email}
-                onChange={(e) => setEmail(e.target.value)}/>
+                onChange={(e) => setEmail(e.target.value)} />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicPassword">
